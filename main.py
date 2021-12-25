@@ -1,11 +1,31 @@
 from tkinter import *
 from tkinter import messagebox
 import json
+import random
+import pyperclip
 
 FILE = "password_data.json"
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
+def generate_password():
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+               'v',
+               'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+               'R',
+               'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+    password_list = [random.choice(letters) for _ in range(random.randint(8, 10))]
+    password_list += [random.choice(symbols) for _ in range(random.randint(2, 4))]
+    password_list += [random.choice(numbers) for _ in range(random.randint(2, 4))]
+
+    random.shuffle(password_list)
+
+    password = "".join(password_list)
+
+    password_input.insert(0, password)
+    pyperclip.copy(password)
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_data():
@@ -27,6 +47,7 @@ def save_data():
         except FileNotFoundError:
             with open(FILE, "w") as file_data:
                 json.dump(new_data, file_data, indent=4)
+                messagebox.showinfo(title=website, message=f"{website} data successfully saved.")
         else:
             data.update(new_data)
             with open(FILE, "w") as file_data:
@@ -68,7 +89,7 @@ password_input.grid(row=3, column=1, sticky="we")
 search_button = Button(text="Search")
 search_button.grid(row=1, column=2, sticky="we")
 
-generate_password = Button(text="Generate Password")
+generate_password = Button(text="Generate Password", command=generate_password)
 generate_password.grid(row=3, column=2, sticky="we")
 
 add_button = Button(text="Add", command=save_data)
