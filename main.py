@@ -7,6 +7,27 @@ import pyperclip
 FILE = "password_data.json"
 
 
+# ---------------------------- SEARCH DATA ------------------------------- #
+def search_data():
+    try:
+        with open(FILE, "r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        print("no files yet")
+    else:
+        website = website_input.get().title()
+
+        try:
+            username = data[website]["username"]
+            password = data[website]["password"]
+
+        except KeyError:
+            messagebox.showinfo(title=website, message=f"{website} data not found!")
+        else:
+            pyperclip.copy(password)
+            messagebox.showinfo(title=website, message=f"Username: {username}\nPassword: {password}")
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
@@ -26,6 +47,7 @@ def generate_password():
 
     password_input.insert(0, password)
     pyperclip.copy(password)
+
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_data():
@@ -78,6 +100,7 @@ password_label = Label(text="Password:")
 password_label.grid(row=3, column=0)
 
 website_input = Entry()
+website_input.focus()
 website_input.grid(row=1, column=1, sticky="we")
 
 username_input = Entry()
@@ -86,7 +109,7 @@ username_input.grid(row=2, column=1, columnspan=2, sticky="we")
 password_input = Entry()
 password_input.grid(row=3, column=1, sticky="we")
 
-search_button = Button(text="Search")
+search_button = Button(text="Search", command=search_data)
 search_button.grid(row=1, column=2, sticky="we")
 
 generate_password = Button(text="Generate Password", command=generate_password)
