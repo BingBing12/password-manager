@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import json
 
 FILE = "password_data.json"
@@ -8,7 +9,7 @@ FILE = "password_data.json"
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_data():
-    website = website_input.get()
+    website = website_input.get().title()
     username = username_input.get()
     password = password_input.get()
     new_data = {
@@ -17,19 +18,25 @@ def save_data():
             "password": password,
         }
     }
-    try:
-        with open(FILE, "r") as file_data:
-            data = json.load(file_data)
-    except FileNotFoundError:
-        with open(FILE, "w") as file_data:
-            json.dump(new_data, file_data, indent=4)
-    else:
-        data.update(new_data)
-        with open(FILE, "w") as file_data:
-            json.dump(data, file_data, indent=4)
-    finally:
-        website_input.delete(0, END)
-        password_input.delete(0, END)
+
+    if messagebox.askokcancel(title=website, message=f"username: {username}\npassword: {password}\n"
+                                                     f"Would you like to proceed?"):
+        try:
+            with open(FILE, "r") as file_data:
+                data = json.load(file_data)
+        except FileNotFoundError:
+            with open(FILE, "w") as file_data:
+                json.dump(new_data, file_data, indent=4)
+        else:
+            data.update(new_data)
+            with open(FILE, "w") as file_data:
+                json.dump(data, file_data, indent=4)
+                messagebox.showinfo(title=website, message=f"{website} data successfully saved.")
+        finally:
+            website_input.delete(0, END)
+            password_input.delete(0, END)
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
 window.title("Password Manager")
